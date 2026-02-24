@@ -1,130 +1,37 @@
 'use client'
 
-import { useRef, useMemo, useEffect, useState } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import * as THREE from 'three'
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { HERO_CONTENT } from '@/lib/data/mockData'
-import { useIsMobile, usePrefersReducedMotion } from '@/hooks/useMediaQuery'
 
-import vertexShader from '@/shaders/fabric/vertex.glsl'
-import fragmentShader from '@/shaders/fabric/fragment.glsl'
-
-function FabricMesh() {
-  const materialRef = useRef<THREE.ShaderMaterial>(null)
-  const { viewport } = useThree()
-
-  const uniforms = useMemo(() => ({
-    uTime: { value: 0 },
-    uScrollProgress: { value: 0 },
-    uPointer: { value: new THREE.Vector2(0, 0) },
-    uNoiseScale: { value: 1.5 },
-    uBaseColor: { value: new THREE.Color('#F5C4A0') },
-    uHighlightColor: { value: new THREE.Color('#E0C498') },
-    uSheen: { value: 0.65 },
-  }), [])
-
-  useFrame((state) => {
-    if (materialRef.current) {
-      // Slow down time progression — no need for 60fps precision on fabric sway
-      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime * 0.5
-    }
-  })
-
-  useGSAP(() => {
-    ScrollTrigger.create({
-      trigger: '#hero-section',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 1,
-      onUpdate: (self) => {
-        if (materialRef.current) {
-          materialRef.current.uniforms.uScrollProgress.value = self.progress
-        }
-      },
-    })
-  })
-
-  return (
-    <mesh scale={[viewport.width * 1.2, viewport.height * 1.2, 1]}>
-      {/* Reduced from 128x128 to 48x48 — 7x fewer vertices, visually identical */}
-      <planeGeometry args={[1, 1, 48, 48]} />
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-        transparent
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  )
-}
-
-/** Static CSS gradient fallback for mobile / reduced-motion */
-function FabricFallback() {
-  return (
-    <div
-      className="absolute inset-0"
-      style={{
-        background: `
-          radial-gradient(ellipse at 35% 45%, #F5C4A0 0%, transparent 55%),
-          radial-gradient(ellipse at 65% 55%, #E0C498 0%, transparent 50%),
-          radial-gradient(ellipse at 50% 50%, #C4A882 0%, transparent 70%),
-          linear-gradient(135deg, #2A2218 0%, #1A1410 40%, #0A0A0A 100%)
-        `,
-      }}
-    />
-  )
-}
-
+/**
+ * Hero section — pure CSS, zero GPU cost.
+ *
+ * The WebGL fabric shader was the #1 performance bottleneck,
+ * running GLSL on every frame for ~200vh of scroll distance.
+ * This CSS gradient produces a nearly identical luxury aesthetic
+ * with literally zero GPU overhead.
+ */
 export default function HeroFabric() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(true)
-  const isMobile = useIsMobile()
-  const prefersReducedMotion = usePrefersReducedMotion()
-
-  // Use static fallback on mobile or when user prefers reduced motion
-  const useStaticFallback = isMobile || prefersReducedMotion
-
-  // Pause Canvas rendering when hero is off-screen
-  useEffect(() => {
-    if (useStaticFallback) return
-    const el = containerRef.current
-    if (!el) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [useStaticFallback])
-
   return (
     <section
       id="hero-section"
-      ref={containerRef}
-      className="relative h-[200vh] w-full"
+      className="relative h-[130vh] w-full"
     >
-      {/* Sticky canvas container */}
+      {/* Sticky container — stays on screen during parallax scroll */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {useStaticFallback ? (
-          <FabricFallback />
-        ) : (
-          <Canvas
-            dpr={1}
-            gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
-            camera={{ position: [0, 0, 2], fov: 50 }}
-            frameloop={isVisible ? 'always' : 'never'}
-          >
-            <FabricMesh />
-          </Canvas>
-        )}
+        {/* Layered radial gradients mimicking the fabric shader */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse at 35% 45%, #F5C4A0 0%, transparent 55%),
+              radial-gradient(ellipse at 65% 55%, #E0C498 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, #C4A882 0%, transparent 70%),
+              linear-gradient(135deg, #2A2218 0%, #1A1410 40%, #0A0A0A 100%)
+            `,
+          }}
+        />
 
-        {/* CSS vignette replacement — zero GPU cost */}
+        {/* Vignette edge darkening */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
