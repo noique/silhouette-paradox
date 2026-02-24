@@ -51,6 +51,8 @@ export default function SankeyAct() {
       start: 'top 15%',
       end: '+=150%',
       pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
       scrub: 1.5,
       onUpdate: (self) => {
         updateProgress(self.progress)

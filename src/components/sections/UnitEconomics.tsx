@@ -51,6 +51,8 @@ export default function UnitEconomics() {
         start: 'top 15%',
         end: '+=200%',
         pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
         scrub: 1.5,
         onUpdate: (self) => {
           updateProgress(self.progress)

@@ -44,22 +44,31 @@ const TheVerdict = dynamic(() => import('@/components/sections/TheVerdict'), {
 export default function Home() {
   return (
     <main>
-      {/* 1. Hero — "Something is wrong in DTC fashion." */}
-      <HeroFabric />
-      {/* 2. Market Pulse — "The market looks like a goldmine..." */}
-      <MarketPulse />
-      {/* 3. Executive Summary — "...but the numbers tell a different story." */}
-      <ExecutiveSummary />
-      {/* 4. Unit Economics — "Zoom in on a single $68 order." */}
-      <UnitEconomics />
-      {/* 5. Sankey — "Now multiply by 73,529 orders." */}
-      <SankeyAct />
-      {/* 6. Return & Fraud — "Here is exactly where the money goes." */}
-      <ReturnFraudDeepDive />
-      {/* 7. The Verdict — "Five truths no one will say out loud." */}
-      <TheVerdict />
-      {/* 8. Closing — "There is one way out." */}
-      <Closing />
+      {/* Each section gets ascending z-index so later sections scroll OVER pinned ones cleanly */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <HeroFabric />
+      </div>
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        <MarketPulse />
+      </div>
+      <div style={{ position: 'relative', zIndex: 3 }}>
+        <ExecutiveSummary />
+      </div>
+      <div style={{ position: 'relative', zIndex: 4 }}>
+        <UnitEconomics />
+      </div>
+      <div style={{ position: 'relative', zIndex: 5 }}>
+        <SankeyAct />
+      </div>
+      <div style={{ position: 'relative', zIndex: 6 }}>
+        <ReturnFraudDeepDive />
+      </div>
+      <div style={{ position: 'relative', zIndex: 7 }}>
+        <TheVerdict />
+      </div>
+      <div style={{ position: 'relative', zIndex: 8 }}>
+        <Closing />
+      </div>
     </main>
   )
 }
