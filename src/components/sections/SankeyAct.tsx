@@ -48,7 +48,7 @@ export default function SankeyAct() {
     // Pin the chart and reveal it during scroll
     ScrollTrigger.create({
       trigger: pinRef.current,
-      start: 'top 15%',
+      start: 'top top',
       end: '+=150%',
       pin: true,
       pinSpacing: true,
@@ -90,22 +90,24 @@ export default function SankeyAct() {
         </p>
       </div>
 
-      {/* Pinned chart container — needs own background so it's opaque when position:fixed */}
-      <div ref={pinRef} className="relative w-full pb-20" style={{ background: 'var(--color-bg)' }}>
-        <div
-          ref={chartRef}
-          className="mx-auto max-w-[1600px] px-4 md:px-8 lg:px-12"
-        >
-          {/* Horizontally scrollable on mobile to preserve chart readability */}
+      {/* Pinned chart container — h-screen + overflow-hidden keeps content in viewport */}
+      <div ref={pinRef} className="relative w-full h-screen overflow-hidden" style={{ background: 'var(--color-bg)' }}>
+        <div className="h-full flex items-center">
           <div
-            className="md:overflow-visible"
-            style={{
-              overflowX: isMobile ? 'auto' : undefined,
-              WebkitOverflowScrolling: 'touch',
-            }}
+            ref={chartRef}
+            className="mx-auto max-w-[1600px] w-full px-4 md:px-8 lg:px-12"
           >
-            <div style={{ minWidth: isMobile ? '900px' : undefined }}>
-              <SankeyChart data={SANKEY_MOCK_DATA} revealProgress={revealProgress} />
+            {/* Horizontally scrollable on mobile to preserve chart readability */}
+            <div
+              className="md:overflow-visible"
+              style={{
+                overflowX: isMobile ? 'auto' : undefined,
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              <div style={{ minWidth: isMobile ? '900px' : undefined }}>
+                <SankeyChart data={SANKEY_MOCK_DATA} revealProgress={revealProgress} />
+              </div>
             </div>
           </div>
         </div>
@@ -113,7 +115,7 @@ export default function SankeyAct() {
         {/* Mobile swipe hint */}
         {isMobile && (
           <div
-            className="flex items-center justify-center gap-2 mt-3"
+            className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2"
             style={{
               opacity: revealProgress > 0.1 ? 0.5 : 0,
               transition: 'opacity 0.5s ease-out',

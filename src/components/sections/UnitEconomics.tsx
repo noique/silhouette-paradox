@@ -48,7 +48,7 @@ export default function UnitEconomics() {
       // Pinned waterfall chart
       ScrollTrigger.create({
         trigger: pinRef.current,
-        start: 'top 15%',
+        start: 'top top',
         end: '+=200%',
         pin: true,
         pinSpacing: true,
@@ -75,22 +75,24 @@ export default function UnitEconomics() {
         subtitle={UNIT_ECONOMICS_DATA.subtitle}
       />
 
-      {/* Pinned chart container — needs own background so it's opaque when position:fixed */}
-      <div ref={pinRef} className="relative w-full pb-20" style={{ background: 'var(--color-bg)' }}>
-        <div className="mx-auto max-w-[1200px] px-4 md:px-8 lg:px-12">
-          <div
-            className="md:overflow-visible"
-            style={{
-              overflowX: isMobile ? 'auto' : undefined,
-              WebkitOverflowScrolling: 'touch',
-            }}
-          >
-            <div style={{ minWidth: isMobile ? '700px' : undefined }}>
-              <WaterfallBar
-                steps={UNIT_ECONOMICS_DATA.steps}
-                revealProgress={revealProgress}
-                annotations={UNIT_ECONOMICS_DATA.annotations}
-              />
+      {/* Pinned chart container — h-screen + overflow-hidden keeps content in viewport */}
+      <div ref={pinRef} className="relative w-full h-screen overflow-hidden" style={{ background: 'var(--color-bg)' }}>
+        <div className="h-full flex items-center">
+          <div className="mx-auto max-w-[1200px] w-full px-4 md:px-8 lg:px-12">
+            <div
+              className="md:overflow-visible"
+              style={{
+                overflowX: isMobile ? 'auto' : undefined,
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              <div style={{ minWidth: isMobile ? '700px' : undefined }}>
+                <WaterfallBar
+                  steps={UNIT_ECONOMICS_DATA.steps}
+                  revealProgress={revealProgress}
+                  annotations={UNIT_ECONOMICS_DATA.annotations}
+                />
+              </div>
             </div>
           </div>
         </div>
