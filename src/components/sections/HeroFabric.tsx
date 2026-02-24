@@ -9,7 +9,7 @@ import { HERO_CONTENT } from '@/lib/data/mockData'
 export default function HeroFabric() {
   return (
     <section
-      id="hero-section"
+      id="act-1-hero"
       className="relative h-[130vh] w-full"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">

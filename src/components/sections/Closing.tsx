@@ -4,10 +4,12 @@ import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { CLOSING_DATA } from '@/lib/data/mockData'
 
 export default function Closing() {
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const recsRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
     if (!contentRef.current) return
@@ -28,13 +30,35 @@ export default function Closing() {
         },
       }
     )
+
+    // Recommendations stagger — separate trigger for later in scroll
+    if (recsRef.current) {
+      const recCards = recsRef.current.querySelectorAll('.rec-card')
+      gsap.fromTo(
+        recCards,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: recsRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    }
   }, { scope: sectionRef })
 
   return (
     <section
+      id="act-5-closing"
       ref={sectionRef}
       className="relative w-full py-40 md:py-64"
-      style={{ background: 'var(--color-bg)' }}
+      style={{ background: 'var(--color-bg-warm)' }}
     >
       <div
         ref={contentRef}
@@ -89,7 +113,7 @@ export default function Closing() {
         </h2>
 
         <p
-          className="text-base md:text-lg max-w-2xl leading-relaxed mb-16"
+          className="text-base md:text-lg max-w-2xl leading-relaxed mb-24"
           style={{ color: 'var(--color-text-secondary)' }}
         >
           Every additional SKU multiplies your return surface area. Every return
@@ -99,7 +123,52 @@ export default function Closing() {
           eliminated the products that were silently destroying their unit
           economics.
         </p>
+      </div>
 
+      {/* Structured recommendations */}
+      <div
+        ref={recsRef}
+        className="mx-auto max-w-[var(--max-content)] px-10 md:px-20"
+      >
+        <div className="space-y-16 md:space-y-20 mb-32">
+          {CLOSING_DATA.recommendations.map((rec) => (
+            <div key={rec.number} className="rec-card max-w-3xl">
+              {/* Number line */}
+              <div className="flex items-center gap-4 mb-6">
+                <div
+                  className="w-12 h-px"
+                  style={{ background: 'var(--color-peach)', opacity: 0.4 }}
+                />
+                <span
+                  className="text-[11px] tracking-[0.4em] uppercase tabular-nums"
+                  style={{ color: 'var(--color-peach)', opacity: 0.7 }}
+                >
+                  {rec.number}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3
+                className="text-2xl md:text-3xl font-bold tracking-tight mb-5"
+                style={{ color: 'var(--color-cream)', fontFamily: 'var(--font-serif)' }}
+              >
+                {rec.title}
+              </h3>
+
+              {/* Body */}
+              <p
+                className="text-base md:text-lg leading-relaxed"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                {rec.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA + Footer */}
+      <div className="mx-auto max-w-[var(--max-content)] px-10 md:px-20">
         {/* CTA — luxury book colophon style */}
         <div
           className="pt-16 border-t"

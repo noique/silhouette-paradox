@@ -6,20 +6,26 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { RETURN_FRAUD_DATA } from '@/lib/data/mockData'
 import SectionHeader from '@/components/ui/SectionHeader'
-import DonutRing from '@/components/charts/DonutRing'
+import ProportionBar from '@/components/charts/ProportionBar'
 
 export default function ReturnFraudDeepDive() {
   const sectionRef = useRef<HTMLElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
-  const donutsRef = useRef<HTMLDivElement>(null)
+  const barsRef = useRef<HTMLDivElement>(null)
   const costRef = useRef<HTMLDivElement>(null)
+  const comparisonRef = useRef<HTMLDivElement>(null)
 
-  const { returnDonut, fraudDonut, costPerReturn, costPerReturnTotal, costInsight } =
-    RETURN_FRAUD_DATA
+  const {
+    returnDonut,
+    fraudDonut,
+    costPerReturn,
+    costPerReturnTotal,
+    costComparison,
+  } = RETURN_FRAUD_DATA
 
   useGSAP(
     () => {
-      if (!headerRef.current || !donutsRef.current || !costRef.current) return
+      if (!headerRef.current || !barsRef.current || !costRef.current) return
 
       // Header
       gsap.fromTo(
@@ -38,35 +44,35 @@ export default function ReturnFraudDeepDive() {
         }
       )
 
-      // Donut titles
-      const titles = donutsRef.current.querySelectorAll('.donut-title')
+      // Proportion bars stagger
+      const barBlocks = barsRef.current.querySelectorAll('.proportion-block')
       gsap.fromTo(
-        titles,
-        { opacity: 0, y: 20 },
+        barBlocks,
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.6,
+          duration: 0.7,
           stagger: 0.2,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: donutsRef.current,
+            trigger: barsRef.current,
             start: 'top 70%',
             toggleActions: 'play none none reverse',
           },
         }
       )
 
-      // Cost breakdown bars
-      const bars = costRef.current.querySelectorAll('.cost-bar')
+      // Cost breakdown stagger
+      const costItems = costRef.current.querySelectorAll('.cost-item')
       gsap.fromTo(
-        bars,
-        { opacity: 0, x: -30 },
+        costItems,
+        { opacity: 0, x: -20 },
         {
           opacity: 1,
           x: 0,
-          duration: 0.6,
-          stagger: 0.1,
+          duration: 0.5,
+          stagger: 0.08,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: costRef.current,
@@ -76,23 +82,24 @@ export default function ReturnFraudDeepDive() {
         }
       )
 
-      // Cost insight
-      const insight = costRef.current.querySelector('.cost-insight')
-      gsap.fromTo(
-        insight,
-        { opacity: 0, y: 15 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: insight as Element,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      )
+      // Comparison callout
+      if (comparisonRef.current) {
+        gsap.fromTo(
+          comparisonRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: comparisonRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        )
+      }
     },
     { scope: sectionRef }
   )
@@ -101,6 +108,7 @@ export default function ReturnFraudDeepDive() {
 
   return (
     <section
+      id="act-4-return"
       ref={sectionRef}
       className="relative w-full"
       style={{ background: 'var(--color-bg-warm)' }}
@@ -113,46 +121,34 @@ export default function ReturnFraudDeepDive() {
         labelColor="var(--color-burgundy)"
       />
 
-      {/* Two donut charts */}
+      {/* Proportion bars */}
       <div
-        ref={donutsRef}
-        className="mx-auto max-w-[var(--max-content)] px-8 md:px-20 pb-16 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16"
+        ref={barsRef}
+        className="mx-auto max-w-[var(--max-content)] px-8 md:px-20 pb-16 space-y-14"
       >
-        {/* Return donut */}
-        <div>
-          <h3
-            className="donut-title text-lg font-medium mb-6"
-            style={{ color: 'var(--color-cream)', fontFamily: 'var(--font-serif)' }}
-          >
-            {returnDonut.title}
-          </h3>
-          <DonutRing
-            segments={returnDonut.segments}
+        <div className="proportion-block">
+          <ProportionBar
+            title={returnDonut.title}
             totalLabel={returnDonut.totalLabel}
             totalSublabel={returnDonut.totalSublabel}
+            segments={returnDonut.segments}
           />
         </div>
 
-        {/* Fraud donut */}
-        <div>
-          <h3
-            className="donut-title text-lg font-medium mb-6"
-            style={{ color: 'var(--color-cream)', fontFamily: 'var(--font-serif)' }}
-          >
-            {fraudDonut.title}
-          </h3>
-          <DonutRing
-            segments={fraudDonut.segments}
+        <div className="proportion-block">
+          <ProportionBar
+            title={fraudDonut.title}
             totalLabel={fraudDonut.totalLabel}
             totalSublabel={fraudDonut.totalSublabel}
+            segments={fraudDonut.segments}
           />
         </div>
       </div>
 
-      {/* Cost per return breakdown */}
+      {/* Cost breakdown — waterfall style */}
       <div
         ref={costRef}
-        className="mx-auto max-w-[var(--max-content)] px-8 md:px-20 pb-32 md:pb-48"
+        className="mx-auto max-w-[var(--max-content)] px-8 md:px-20 pb-12"
       >
         <h3
           className="text-base tracking-[0.2em] uppercase mb-8"
@@ -161,10 +157,10 @@ export default function ReturnFraudDeepDive() {
           True Cost Per Return
         </h3>
 
-        <div className="space-y-4 max-w-xl">
+        <div className="space-y-3 max-w-2xl">
           {costPerReturn.map((item, i) => (
-            <div key={i} className="cost-bar">
-              <div className="flex justify-between mb-1">
+            <div key={item.label} className="cost-item">
+              <div className="flex justify-between mb-1.5">
                 <span
                   className="text-sm"
                   style={{ color: 'var(--color-text-secondary)' }}
@@ -179,45 +175,127 @@ export default function ReturnFraudDeepDive() {
                 </span>
               </div>
               <div
-                className="h-3 rounded-sm overflow-hidden"
+                className="h-6 rounded-sm overflow-hidden"
                 style={{ background: 'var(--color-bg-card)' }}
               >
                 <div
                   className="h-full rounded-sm"
                   style={{
                     width: `${(item.value / maxCost) * 100}%`,
-                    background: i === 0 ? 'var(--color-warm-gray-2)' : 'var(--color-burgundy)',
-                    opacity: 0.6,
+                    background:
+                      i === 0
+                        ? 'var(--color-warm-gray-2)'
+                        : 'var(--color-burgundy)',
+                    opacity: 0.5,
                   }}
                 />
               </div>
             </div>
           ))}
 
-          {/* Total */}
-          <div className="pt-4 border-t border-[var(--color-warm-gray-3)]/20 flex justify-between">
-            <span
-              className="text-sm font-medium"
-              style={{ color: 'var(--color-cream)' }}
+          {/* Total line */}
+          <div className="cost-item pt-4 border-t border-[var(--color-warm-gray-3)]/20">
+            <div className="flex justify-between items-baseline">
+              <span
+                className="text-sm font-medium"
+                style={{ color: 'var(--color-cream)' }}
+              >
+                Total Cost Per Return
+              </span>
+              <span
+                className="text-2xl tabular-nums font-semibold"
+                style={{ color: 'var(--color-warning)' }}
+              >
+                ${costPerReturnTotal.toFixed(2)}
+              </span>
+            </div>
+            <p
+              className="text-xs mt-1 tabular-nums"
+              style={{ color: 'var(--color-warning)', opacity: 0.7 }}
             >
-              Total
-            </span>
-            <span
-              className="text-lg tabular-nums font-semibold"
-              style={{ color: 'var(--color-warning)' }}
-            >
-              ${costPerReturnTotal.toFixed(2)}
-            </span>
+              = {costComparison.multiplier} of original order value
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Insight */}
-        <p
-          className="cost-insight mt-8 text-base md:text-lg italic max-w-lg"
-          style={{ color: 'var(--color-warm-gray-1)', fontFamily: 'var(--font-serif)' }}
+      {/* Comparison callout — the devastating math */}
+      <div
+        ref={comparisonRef}
+        className="mx-auto max-w-[var(--max-content)] px-8 md:px-20 pb-32 md:pb-48"
+      >
+        <div
+          className="max-w-2xl p-8 md:p-12 rounded-sm border"
+          style={{
+            background: 'var(--color-bg-card)',
+            borderColor: 'var(--color-burgundy)',
+            borderWidth: '1px',
+            borderLeftWidth: '3px',
+          }}
         >
-          {costInsight}
-        </p>
+          {/* Visual comparison */}
+          <div className="flex items-center gap-6 mb-6">
+            <div className="text-center">
+              <div
+                className="text-3xl md:text-4xl font-light tabular-nums"
+                style={{ color: 'var(--color-cream)' }}
+              >
+                ${costComparison.orderValue}
+              </div>
+              <p
+                className="text-[10px] tracking-[0.15em] uppercase mt-1"
+                style={{ color: 'var(--color-warm-gray-3)' }}
+              >
+                Customer Paid
+              </p>
+            </div>
+
+            <div
+              className="text-lg"
+              style={{ color: 'var(--color-warm-gray-3)' }}
+            >
+              vs
+            </div>
+
+            <div className="text-center">
+              <div
+                className="text-3xl md:text-4xl font-light tabular-nums"
+                style={{ color: 'var(--color-warning)' }}
+              >
+                ${costComparison.returnCost}
+              </div>
+              <p
+                className="text-[10px] tracking-[0.15em] uppercase mt-1"
+                style={{ color: 'var(--color-warm-gray-3)' }}
+              >
+                Return Cost
+              </p>
+            </div>
+
+            <div className="text-center ml-auto">
+              <div
+                className="text-3xl md:text-4xl font-bold tabular-nums"
+                style={{ color: 'var(--color-burgundy)' }}
+              >
+                -${costComparison.overage}
+              </div>
+              <p
+                className="text-[10px] tracking-[0.15em] uppercase mt-1"
+                style={{ color: 'var(--color-burgundy)' }}
+              >
+                Net Loss
+              </p>
+            </div>
+          </div>
+
+          {/* Devastating framing */}
+          <p
+            className="text-base md:text-lg italic leading-relaxed"
+            style={{ color: 'var(--color-warm-gray-1)', fontFamily: 'var(--font-serif)' }}
+          >
+            {costComparison.framing}
+          </p>
+        </div>
       </div>
     </section>
   )

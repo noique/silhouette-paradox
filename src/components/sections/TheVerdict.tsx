@@ -94,6 +94,7 @@ export default function TheVerdict() {
 
   return (
     <section
+      id="act-5-verdict"
       ref={sectionRef}
       className="relative w-full"
       style={{ background: 'var(--color-bg)' }}

@@ -62,6 +62,7 @@ export default function SankeyAct() {
 
   return (
     <section
+      id="act-3-sankey"
       ref={sectionRef}
       className="relative w-full"
       style={{ background: 'var(--color-bg)' }}
@@ -130,11 +131,11 @@ export default function SankeyAct() {
           </div>
         )}
 
-        {/* Scroll progress indicator */}
+        {/* Scroll progress indicator — bar only */}
         <div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2"
           style={{
-            opacity: revealProgress < 0.95 ? 0.5 : 0,
+            opacity: revealProgress < 0.95 ? 0.4 : 0,
             transition: 'opacity 0.5s ease-out',
           }}
         >
@@ -144,12 +145,6 @@ export default function SankeyAct() {
               style={{ width: `${revealProgress * 100}%`, transition: 'width 0.1s linear' }}
             />
           </div>
-          <span
-            className="text-[10px] tracking-[0.3em] uppercase"
-            style={{ color: 'var(--color-warm-gray-3)', fontFamily: 'var(--font-sans)' }}
-          >
-            Scroll to reveal
-          </span>
         </div>
       </div>
 
