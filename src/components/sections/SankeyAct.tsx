@@ -103,7 +103,6 @@ export default function SankeyAct() {
               overflowX: isMobile ? 'auto' : undefined,
               WebkitOverflowScrolling: 'touch',
             }}
-            data-lenis-prevent
           >
             <div style={{ minWidth: isMobile ? '900px' : undefined }}>
               <SankeyChart data={SANKEY_MOCK_DATA} revealProgress={revealProgress} />

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { serif, sans } from '@/styles/fonts'
 import GSAPProvider from '@/components/providers/GSAPProvider'
-import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -31,9 +30,7 @@ export default function RootLayout({
     <html lang="en" className={`${serif.variable} ${sans.variable}`}>
       <body>
         <GSAPProvider>
-          <SmoothScrollProvider>
-            {children}
-          </SmoothScrollProvider>
+          {children}
         </GSAPProvider>
       </body>
     </html>

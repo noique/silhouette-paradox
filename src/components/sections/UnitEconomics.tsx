@@ -84,7 +84,6 @@ export default function UnitEconomics() {
               overflowX: isMobile ? 'auto' : undefined,
               WebkitOverflowScrolling: 'touch',
             }}
-            data-lenis-prevent
           >
             <div style={{ minWidth: isMobile ? '700px' : undefined }}>
               <WaterfallBar
