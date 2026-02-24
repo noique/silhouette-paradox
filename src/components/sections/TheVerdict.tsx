@@ -106,8 +106,8 @@ export default function TheVerdict() {
         labelColor="var(--color-burgundy)"
       />
 
-      {/* Pinned full-viewport card reveal */}
-      <div ref={pinRef} className="relative w-full h-screen overflow-hidden">
+      {/* Pinned full-viewport card reveal — needs own background so it's opaque when position:fixed */}
+      <div ref={pinRef} className="relative w-full h-screen overflow-hidden" style={{ background: 'var(--color-bg)' }}>
         {/* Cards stack — each card fills viewport */}
         <div
           ref={cardsContainerRef}

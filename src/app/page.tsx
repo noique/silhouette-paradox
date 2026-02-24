@@ -44,31 +44,14 @@ const TheVerdict = dynamic(() => import('@/components/sections/TheVerdict'), {
 export default function Home() {
   return (
     <main>
-      {/* Each section gets ascending z-index so later sections scroll OVER pinned ones cleanly */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <HeroFabric />
-      </div>
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        <MarketPulse />
-      </div>
-      <div style={{ position: 'relative', zIndex: 3 }}>
-        <ExecutiveSummary />
-      </div>
-      <div style={{ position: 'relative', zIndex: 4 }}>
-        <UnitEconomics />
-      </div>
-      <div style={{ position: 'relative', zIndex: 5 }}>
-        <SankeyAct />
-      </div>
-      <div style={{ position: 'relative', zIndex: 6 }}>
-        <ReturnFraudDeepDive />
-      </div>
-      <div style={{ position: 'relative', zIndex: 7 }}>
-        <TheVerdict />
-      </div>
-      <div style={{ position: 'relative', zIndex: 8 }}>
-        <Closing />
-      </div>
+      <HeroFabric />
+      <MarketPulse />
+      <ExecutiveSummary />
+      <UnitEconomics />
+      <SankeyAct />
+      <ReturnFraudDeepDive />
+      <TheVerdict />
+      <Closing />
     </main>
   )
 }

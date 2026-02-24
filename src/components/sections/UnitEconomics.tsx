@@ -75,8 +75,8 @@ export default function UnitEconomics() {
         subtitle={UNIT_ECONOMICS_DATA.subtitle}
       />
 
-      {/* Pinned chart container */}
-      <div ref={pinRef} className="relative w-full pb-20">
+      {/* Pinned chart container — needs own background so it's opaque when position:fixed */}
+      <div ref={pinRef} className="relative w-full pb-20" style={{ background: 'var(--color-bg)' }}>
         <div className="mx-auto max-w-[1200px] px-4 md:px-8 lg:px-12">
           <div
             className="md:overflow-visible"

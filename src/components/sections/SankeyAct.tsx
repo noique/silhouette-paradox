@@ -90,8 +90,8 @@ export default function SankeyAct() {
         </p>
       </div>
 
-      {/* Pinned chart container */}
-      <div ref={pinRef} className="relative w-full pb-20">
+      {/* Pinned chart container — needs own background so it's opaque when position:fixed */}
+      <div ref={pinRef} className="relative w-full pb-20" style={{ background: 'var(--color-bg)' }}>
         <div
           ref={chartRef}
           className="mx-auto max-w-[1600px] px-4 md:px-8 lg:px-12"
