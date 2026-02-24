@@ -127,6 +127,26 @@ h1, h2, h3 {
   border-radius: 2px;
 }
 
+/* ── Hero glow breathing — opacity-only animation, zero GPU repaint ── */
+
+.hero-glow-primary {
+  animation: hero-breathe-a 8s ease-in-out infinite alternate;
+}
+
+.hero-glow-secondary {
+  animation: hero-breathe-b 10s ease-in-out infinite alternate;
+}
+
+@keyframes hero-breathe-a {
+  0%   { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes hero-breathe-b {
+  0%   { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
 /* ── Reduced motion ── */
 
 @media (prefers-reduced-motion: reduce) {
