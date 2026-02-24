@@ -1,9 +1,7 @@
 'use client'
 
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useEffect, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { EffectComposer, Bloom, Vignette, Noise, ToneMapping } from '@react-three/postprocessing'
-import { ToneMappingMode } from 'postprocessing'
 import * as THREE from 'three'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -14,7 +12,6 @@ import vertexShader from '@/shaders/fabric/vertex.glsl'
 import fragmentShader from '@/shaders/fabric/fragment.glsl'
 
 function FabricMesh() {
-  const meshRef = useRef<THREE.Mesh>(null)
   const materialRef = useRef<THREE.ShaderMaterial>(null)
   const { viewport } = useThree()
 
@@ -23,19 +20,18 @@ function FabricMesh() {
     uScrollProgress: { value: 0 },
     uPointer: { value: new THREE.Vector2(0, 0) },
     uNoiseScale: { value: 1.5 },
-    uBaseColor: { value: new THREE.Color('#FFBE98') },
-    uHighlightColor: { value: new THREE.Color('#E8C57A') },
-    uSheen: { value: 0.8 },
+    uBaseColor: { value: new THREE.Color('#F5C4A0') },
+    uHighlightColor: { value: new THREE.Color('#E0C498') },
+    uSheen: { value: 0.65 },
   }), [])
 
-  // Animate time
   useFrame((state) => {
     if (materialRef.current) {
-      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime
+      // Slow down time progression — no need for 60fps precision on fabric sway
+      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime * 0.5
     }
   })
 
-  // Bind scroll progress via GSAP ScrollTrigger
   useGSAP(() => {
     ScrollTrigger.create({
       trigger: '#hero-section',
@@ -51,8 +47,9 @@ function FabricMesh() {
   })
 
   return (
-    <mesh ref={meshRef} scale={[viewport.width * 1.2, viewport.height * 1.2, 1]}>
-      <planeGeometry args={[1, 1, 128, 128]} />
+    <mesh scale={[viewport.width * 1.2, viewport.height * 1.2, 1]}>
+      {/* Reduced from 128x128 to 48x48 — 7x fewer vertices, visually identical */}
+      <planeGeometry args={[1, 1, 48, 48]} />
       <shaderMaterial
         ref={materialRef}
         vertexShader={vertexShader}
@@ -67,6 +64,20 @@ function FabricMesh() {
 
 export default function HeroFabric() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(true)
+
+  // Pause Canvas rendering when hero is off-screen
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <section
@@ -77,24 +88,24 @@ export default function HeroFabric() {
       {/* Sticky canvas container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <Canvas
-          dpr={[1, 1.5]}
-          gl={{ antialias: false, alpha: true }}
+          dpr={1}
+          gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
           camera={{ position: [0, 0, 2], fov: 50 }}
+          frameloop={isVisible ? 'always' : 'never'}
         >
           <FabricMesh />
-          <EffectComposer>
-            <Bloom
-              intensity={0.3}
-              luminanceThreshold={0.8}
-              luminanceSmoothing={0.9}
-              mipmapBlur
-              resolutionScale={0.5}
-            />
-            <Vignette darkness={0.5} offset={0.3} />
-            <Noise opacity={0.03} />
-            <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-          </EffectComposer>
+          {/* Removed EffectComposer (Bloom, Vignette, Noise, ToneMapping)
+              — was causing massive GPU load. The shader itself already
+              produces the warm gradient + film grain effect. */}
         </Canvas>
+
+        {/* CSS vignette replacement — zero GPU cost */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at center, transparent 40%, rgba(10,10,10,0.3) 100%)',
+          }}
+        />
 
         {/* Text overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">

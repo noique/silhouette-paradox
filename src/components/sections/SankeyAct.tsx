@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -13,6 +13,15 @@ export default function SankeyAct() {
   const chartRef = useRef<HTMLDivElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
   const [revealProgress, setRevealProgress] = useState(0)
+  const lastProgressRef = useRef(0)
+
+  // Throttle state updates — only re-render when progress changes by ≥2%
+  const updateProgress = useCallback((progress: number) => {
+    if (Math.abs(progress - lastProgressRef.current) > 0.02 || progress >= 0.99) {
+      lastProgressRef.current = progress
+      setRevealProgress(progress)
+    }
+  }, [])
 
   useGSAP(() => {
     if (!sectionRef.current || !titleRef.current || !chartRef.current || !pinRef.current) return
@@ -42,7 +51,7 @@ export default function SankeyAct() {
       pin: true,
       scrub: 1.5,
       onUpdate: (self) => {
-        setRevealProgress(self.progress)
+        updateProgress(self.progress)
       },
     })
   }, { scope: sectionRef })

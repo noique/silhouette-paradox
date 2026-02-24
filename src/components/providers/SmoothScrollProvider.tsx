@@ -17,8 +17,9 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
   useEffect(() => {
     const lenis = new Lenis({
       autoRaf: false,
-      lerp: 0.1,
-      duration: 1.2,
+      lerp: 0.08,
+      duration: 1.4,
+      touchMultiplier: 1.5,
     })
 
     lenisRef.current = lenis
