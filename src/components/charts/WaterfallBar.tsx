@@ -52,15 +52,7 @@ export default function WaterfallBar({
       role="img"
       aria-label="Waterfall chart showing $68 order cost breakdown"
     >
-      <defs>
-        <filter id="waterfall-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
+      {/* No SVG filters — they kill GPU performance */}
 
       {steps.map((step, i) => {
         const opacity = getStepOpacity(i, steps.length, revealProgress)
@@ -107,7 +99,8 @@ export default function WaterfallBar({
               fill={color}
               rx={2}
               opacity={isFinal ? 1 : 0.7}
-              filter={isFinal ? 'url(#waterfall-glow)' : undefined}
+              stroke={isFinal ? '#FFBE98' : undefined}
+              strokeWidth={isFinal ? 1 : 0}
             />
 
             {/* Value label (on bar or next to it) */}

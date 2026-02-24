@@ -224,7 +224,7 @@ export default function SankeyChart({ data, revealProgress }: SankeyChartProps) 
             )
           })}
 
-          {/* Animated arterial bleed for loss_critical */}
+          {/* Static arterial bleed gradient for loss_critical */}
           <linearGradient
             id="bleed-flow"
             x1="0"
@@ -233,40 +233,10 @@ export default function SankeyChart({ data, revealProgress }: SankeyChartProps) 
             y2="0"
             gradientUnits="objectBoundingBox"
           >
-            <stop offset="0%" stopColor="#8B0000" stopOpacity={0.7}>
-              <animate
-                attributeName="stopColor"
-                values="#8B0000;#B22222;#8B0000"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="50%" stopColor="#800000" stopOpacity={0.9}>
-              <animate
-                attributeName="stopColor"
-                values="#800000;#A52A2A;#800000"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="100%" stopColor="#722F37" stopOpacity={0.6}>
-              <animate
-                attributeName="stopColor"
-                values="#722F37;#8B0000;#722F37"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </stop>
+            <stop offset="0%" stopColor="#8B0000" stopOpacity={0.7} />
+            <stop offset="50%" stopColor="#800000" stopOpacity={0.9} />
+            <stop offset="100%" stopColor="#722F37" stopOpacity={0.6} />
           </linearGradient>
-
-          {/* Glow filter for Net Profit node */}
-          <filter id="final-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
         </defs>
 
         {/* Links layer */}
@@ -364,7 +334,8 @@ export default function SankeyChart({ data, revealProgress }: SankeyChartProps) 
                   height={nodeHeight}
                   fill={nodeColor}
                   rx={2}
-                  filter={isFinal ? 'url(#final-glow)' : undefined}
+                  stroke={isFinal ? '#FFBE98' : undefined}
+                  strokeWidth={isFinal ? 1 : 0}
                   role="img"
                   aria-label={`${label}: ${formatValue(node.value)} (${pctOfGMV(node.value)} of GMV)`}
                 />

@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable}`}>
-      <body className="film-grain">
+      <body>
         <GSAPProvider>
           <SmoothScrollProvider>
             {children}
