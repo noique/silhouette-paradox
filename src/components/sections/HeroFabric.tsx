@@ -142,7 +142,7 @@ export default function HeroFabric() {
           </h1>
           <p
             className="mt-4 md:mt-6 text-base md:text-xl tracking-wide max-w-lg text-center"
-            style={{ color: 'var(--color-warm-gray-2)' }}
+            style={{ color: 'var(--color-warm-gray-1)', opacity: 0.75 }}
           >
             {HERO_CONTENT.subtitle}
           </p>

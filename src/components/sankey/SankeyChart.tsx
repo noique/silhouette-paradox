@@ -16,13 +16,13 @@ interface SankeyChartProps {
   revealProgress: number
 }
 
-const MARGIN = { top: 32, right: 260, bottom: 32, left: 160 }
-const INNER_WIDTH = 840
-const INNER_HEIGHT = 560
+const MARGIN = { top: 40, right: 280, bottom: 40, left: 180 }
+const INNER_WIDTH = 1000
+const INNER_HEIGHT = 680
 const FULL_WIDTH = INNER_WIDTH + MARGIN.left + MARGIN.right
 const FULL_HEIGHT = INNER_HEIGHT + MARGIN.top + MARGIN.bottom
 const NODE_WIDTH = 16
-const NODE_PADDING = 32
+const NODE_PADDING = 40
 
 type LayoutNode = SankeyNode & {
   x0: number

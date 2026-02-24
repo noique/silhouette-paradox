@@ -92,7 +92,7 @@ export default function SankeyAct() {
       <div ref={pinRef} className="relative w-full pb-20">
         <div
           ref={chartRef}
-          className="mx-auto max-w-[1400px] px-4 md:px-8 lg:px-12"
+          className="mx-auto max-w-[1600px] px-4 md:px-8 lg:px-12"
         >
           {/* Horizontally scrollable on mobile to preserve chart readability */}
           <div
