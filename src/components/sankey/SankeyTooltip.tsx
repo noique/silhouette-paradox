@@ -65,6 +65,9 @@ export default function SankeyTooltip({ data, x, y, visible }: SankeyTooltipProp
     <div
       ref={ref}
       className="fixed top-0 left-0 z-50 pointer-events-none"
+      role="tooltip"
+      aria-live="polite"
+      aria-hidden={!visible}
       style={{
         transform: `translate(${x + 16}px, ${y}px)`,
         opacity: visible ? 1 : 0,

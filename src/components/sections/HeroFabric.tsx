@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { HERO_CONTENT } from '@/lib/data/mockData'
+import { useIsMobile, usePrefersReducedMotion } from '@/hooks/useMediaQuery'
 
 import vertexShader from '@/shaders/fabric/vertex.glsl'
 import fragmentShader from '@/shaders/fabric/fragment.glsl'
@@ -62,12 +63,35 @@ function FabricMesh() {
   )
 }
 
+/** Static CSS gradient fallback for mobile / reduced-motion */
+function FabricFallback() {
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        background: `
+          radial-gradient(ellipse at 35% 45%, #F5C4A0 0%, transparent 55%),
+          radial-gradient(ellipse at 65% 55%, #E0C498 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 50%, #C4A882 0%, transparent 70%),
+          linear-gradient(135deg, #2A2218 0%, #1A1410 40%, #0A0A0A 100%)
+        `,
+      }}
+    />
+  )
+}
+
 export default function HeroFabric() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(true)
+  const isMobile = useIsMobile()
+  const prefersReducedMotion = usePrefersReducedMotion()
+
+  // Use static fallback on mobile or when user prefers reduced motion
+  const useStaticFallback = isMobile || prefersReducedMotion
 
   // Pause Canvas rendering when hero is off-screen
   useEffect(() => {
+    if (useStaticFallback) return
     const el = containerRef.current
     if (!el) return
 
@@ -77,7 +101,7 @@ export default function HeroFabric() {
     )
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [useStaticFallback])
 
   return (
     <section
@@ -87,17 +111,18 @@ export default function HeroFabric() {
     >
       {/* Sticky canvas container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <Canvas
-          dpr={1}
-          gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
-          camera={{ position: [0, 0, 2], fov: 50 }}
-          frameloop={isVisible ? 'always' : 'never'}
-        >
-          <FabricMesh />
-          {/* Removed EffectComposer (Bloom, Vignette, Noise, ToneMapping)
-              — was causing massive GPU load. The shader itself already
-              produces the warm gradient + film grain effect. */}
-        </Canvas>
+        {useStaticFallback ? (
+          <FabricFallback />
+        ) : (
+          <Canvas
+            dpr={1}
+            gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
+            camera={{ position: [0, 0, 2], fov: 50 }}
+            frameloop={isVisible ? 'always' : 'never'}
+          >
+            <FabricMesh />
+          </Canvas>
+        )}
 
         {/* CSS vignette replacement — zero GPU cost */}
         <div
@@ -108,15 +133,15 @@ export default function HeroFabric() {
         />
 
         {/* Text overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-6">
           <h1
-            className="text-6xl md:text-8xl font-bold tracking-tighter"
+            className="text-5xl md:text-8xl font-bold tracking-tighter text-center"
             style={{ color: 'var(--color-cream)', fontFamily: 'var(--font-serif)' }}
           >
             {HERO_CONTENT.title}
           </h1>
           <p
-            className="mt-6 text-lg md:text-xl tracking-wide max-w-lg text-center"
+            className="mt-4 md:mt-6 text-base md:text-xl tracking-wide max-w-lg text-center"
             style={{ color: 'var(--color-warm-gray-2)' }}
           >
             {HERO_CONTENT.subtitle}

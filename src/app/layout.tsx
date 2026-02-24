@@ -12,7 +12,14 @@ export const metadata: Metadata = {
     title: 'The Silhouette Paradox',
     description: 'When luxury aesthetics mask financial hemorrhage — a DTC dark data report',
     type: 'website',
+    siteName: 'The Silhouette Paradox',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'The Silhouette Paradox',
+    description: 'When luxury aesthetics mask financial hemorrhage — a DTC dark data report',
+  },
+  metadataBase: new URL('https://silhouette-paradox.vercel.app'),
 }
 
 export default function RootLayout({

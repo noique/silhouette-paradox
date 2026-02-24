@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SANKEY_MOCK_DATA } from '@/lib/data/mockData'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import SankeyChart from '@/components/sankey/SankeyChart'
 
 export default function SankeyAct() {
@@ -14,6 +15,7 @@ export default function SankeyAct() {
   const pinRef = useRef<HTMLDivElement>(null)
   const [revealProgress, setRevealProgress] = useState(0)
   const lastProgressRef = useRef(0)
+  const isMobile = useIsMobile()
 
   // Throttle state updates — only re-render when progress changes by ≥2%
   const updateProgress = useCallback((progress: number) => {
@@ -92,8 +94,38 @@ export default function SankeyAct() {
           ref={chartRef}
           className="mx-auto max-w-[1400px] px-4 md:px-8 lg:px-12"
         >
-          <SankeyChart data={SANKEY_MOCK_DATA} revealProgress={revealProgress} />
+          {/* Horizontally scrollable on mobile to preserve chart readability */}
+          <div
+            className="md:overflow-visible"
+            style={{
+              overflowX: isMobile ? 'auto' : undefined,
+              WebkitOverflowScrolling: 'touch',
+            }}
+            data-lenis-prevent
+          >
+            <div style={{ minWidth: isMobile ? '900px' : undefined }}>
+              <SankeyChart data={SANKEY_MOCK_DATA} revealProgress={revealProgress} />
+            </div>
+          </div>
         </div>
+
+        {/* Mobile swipe hint */}
+        {isMobile && (
+          <div
+            className="flex items-center justify-center gap-2 mt-3"
+            style={{
+              opacity: revealProgress > 0.1 ? 0.5 : 0,
+              transition: 'opacity 0.5s ease-out',
+            }}
+          >
+            <span
+              className="text-[10px] tracking-[0.2em] uppercase"
+              style={{ color: 'var(--color-warm-gray-3)', fontFamily: 'var(--font-sans)' }}
+            >
+              ← Swipe to explore →
+            </span>
+          </div>
+        )}
 
         {/* Scroll progress indicator */}
         <div

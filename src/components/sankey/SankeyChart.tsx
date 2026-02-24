@@ -365,6 +365,8 @@ export default function SankeyChart({ data, revealProgress }: SankeyChartProps) 
                   fill={nodeColor}
                   rx={2}
                   filter={isFinal ? 'url(#final-glow)' : undefined}
+                  role="img"
+                  aria-label={`${label}: ${formatValue(node.value)} (${pctOfGMV(node.value)} of GMV)`}
                 />
 
                 {/* Invisible hit area for narrow nodes */}
@@ -374,6 +376,11 @@ export default function SankeyChart({ data, revealProgress }: SankeyChartProps) 
                   width={node.x1 - node.x0 + 16}
                   height={nodeHeight + 8}
                   fill="transparent"
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${label}: ${formatValue(node.value)}`}
+                  onFocus={(e) => handleNodeEnter(e as unknown as React.MouseEvent, node, i)}
+                  onBlur={handleMouseLeave}
                 />
 
                 {/* Label: name */}
@@ -465,6 +472,21 @@ export default function SankeyChart({ data, revealProgress }: SankeyChartProps) 
         y={tooltip.y}
         visible={tooltip.visible}
       />
+
+      {/* Screen reader summary — hidden visually */}
+      <div className="sr-only" role="region" aria-label="Financial flow summary">
+        <h3>DTC Shapewear P&amp;L: $5M GMV Breakdown</h3>
+        <ul>
+          {typedNodes.map((node, i) => {
+            const { label } = parseNodeLabel(node.name)
+            return (
+              <li key={i}>
+                {label}: {formatValue(node.value)} ({pctOfGMV(node.value)} of GMV)
+              </li>
+            )
+          })}
+        </ul>
+      </div>
     </div>
   )
 }
