@@ -133,6 +133,19 @@ export default function Closing() {
             The Silhouette Paradox — 2026
           </span>
         </div>
+
+        {/* Attribution */}
+        <div className="mt-12">
+          <a
+            href="https://milamaren.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs tracking-[0.2em] transition-opacity hover:opacity-100"
+            style={{ color: 'var(--color-warm-gray-3)', opacity: 0.5 }}
+          >
+            By MilaMaren
+          </a>
+        </div>
       </div>
     </section>
   )
