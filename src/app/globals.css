@@ -1,26 +1,151 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════
+   《轮廓悖论》Design System
+   Luxury Data Aesthetic — Ogilvy × McKinsey
+   ═══════════════════════════════════════════ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Revenue / Brand warmth */
+  --color-peach: #FFBE98;
+  --color-gold: #E8C57A;
+
+  /* Luxury neutral scale */
+  --color-cream: #F5F0EB;
+  --color-warm-gray-1: #D3D3D3;
+  --color-warm-gray-2: #A9A9A9;
+  --color-warm-gray-3: #808080;
+
+  /* Loss escalation scale */
+  --color-warning: #FF6B6B;
+  --color-burgundy: #722F37;
+  --color-blood: #8B0000;
+  --color-abyss: #800000;
+
+  /* Background — NOT pure black, subtle warmth */
+  --color-bg: #0A0A0A;
+  --color-bg-warm: #1A1614;
+  --color-bg-card: #141211;
+
+  /* Text */
+  --color-text-primary: #F5F0EB;
+  --color-text-secondary: #A9A9A9;
+  --color-text-accent: #FFBE98;
+
+  /* Motion — silk unfolding */
+  --ease-luxury-in: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-luxury-out: cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-luxury-in-out: cubic-bezier(0.45, 0, 0.15, 1);
+
+  /* Spacing — 8px grid */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-10: 80px;
+  --space-20: 160px;
+
+  /* Layout */
+  --max-content: 1200px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text-primary);
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base ── */
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ── Typography ── */
+
+h1, h2, h3 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Tabular numerals for financial data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' on;
+}
+
+/* ── Selection ── */
+
+::selection {
+  background-color: var(--color-peach);
+  color: var(--color-bg);
+}
+
+/* ── Scrollbar — minimal, luxury ── */
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-warm-gray-3);
+  border-radius: 2px;
+}
+
+/* ── Reduced motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Film Grain overlay ── */
+
+.film-grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
