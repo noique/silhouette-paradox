@@ -3,11 +3,8 @@
 import { HERO_CONTENT } from '@/lib/data/mockData'
 
 /**
- * Hero section — pure CSS, zero GPU cost.
- *
- * Multi-layer radial gradients fill the entire viewport with warm tones,
- * matching the original WebGL fabric shader aesthetic. A subtle CSS
- * animation adds slow color movement without any GPU frame rendering.
+ * Hero section — single div, single compositing layer, zero GPU cost.
+ * All gradients merged into one background stack to avoid layer explosion.
  */
 export default function HeroFabric() {
   return (
@@ -15,63 +12,19 @@ export default function HeroFabric() {
       id="hero-section"
       className="relative h-[130vh] w-full"
     >
-      {/* Sticky container — stays on screen during parallax scroll */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Base: warm dark fill covering entire viewport — no pure black */}
+        {/* All gradients in ONE div = ONE compositing layer */}
         <div
           className="absolute inset-0"
           style={{
             background: `
+              radial-gradient(ellipse 100% 90% at 50% 50%, transparent 55%, rgba(10,10,10,0.25) 100%),
+              radial-gradient(ellipse 140% 130% at 50% 45%, transparent 50%, rgba(42,34,24,0.5) 80%, rgba(15,12,9,0.8) 100%),
+              radial-gradient(ellipse 110% 100% at 48% 50%, rgba(196,168,130,0.3) 0%, rgba(196,168,130,0.08) 50%, transparent 80%),
+              radial-gradient(ellipse 80% 70% at 58% 52%, rgba(224,196,152,0.4) 0%, rgba(224,196,152,0.1) 35%, transparent 65%),
+              radial-gradient(ellipse 90% 80% at 42% 48%, rgba(245,196,160,0.55) 0%, rgba(245,196,160,0.15) 40%, transparent 70%),
               radial-gradient(ellipse 130% 120% at 50% 50%, #3D2E1E 0%, #1A1410 70%, #0F0C09 100%)
             `,
-          }}
-        />
-
-        {/* Primary warm glow — large, soft, fills most of viewport */}
-        <div
-          className="absolute inset-0 hero-glow-primary"
-          style={{
-            background: `
-              radial-gradient(ellipse 90% 80% at 42% 48%, rgba(245,196,160,0.55) 0%, rgba(245,196,160,0.15) 40%, transparent 70%)
-            `,
-          }}
-        />
-
-        {/* Secondary gold highlight — offset for depth */}
-        <div
-          className="absolute inset-0 hero-glow-secondary"
-          style={{
-            background: `
-              radial-gradient(ellipse 80% 70% at 58% 52%, rgba(224,196,152,0.4) 0%, rgba(224,196,152,0.1) 35%, transparent 65%)
-            `,
-          }}
-        />
-
-        {/* Tertiary warm mid-tone — bridges center glow to edges */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(ellipse 110% 100% at 48% 50%, rgba(196,168,130,0.3) 0%, rgba(196,168,130,0.08) 50%, transparent 80%)
-            `,
-          }}
-        />
-
-        {/* Soft edge warmth — prevents hard black edge */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(ellipse 140% 130% at 50% 45%, transparent 50%, rgba(42,34,24,0.5) 80%, rgba(15,12,9,0.8) 100%)
-            `,
-          }}
-        />
-
-        {/* Very subtle vignette — just darkens corners */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse 100% 90% at 50% 50%, transparent 55%, rgba(10,10,10,0.25) 100%)',
           }}
         />
 
