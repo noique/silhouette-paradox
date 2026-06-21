@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { serif, sans } from '@/styles/fonts'
 import GSAPProvider from '@/components/providers/GSAPProvider'
 import './globals.css'
@@ -37,6 +38,15 @@ export default function RootLayout({
         <GSAPProvider>
           {children}
         </GSAPProvider>
+        {/* Umami analytics — only injected when NEXT_PUBLIC_UMAMI_WEBSITE_ID is set
+            at build time (see .env.deploy). website-id is a public value. */}
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            defer
+            src={process.env.NEXT_PUBLIC_UMAMI_SRC || 'https://stats.noq.us/script.js'}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          />
+        )}
       </body>
     </html>
   )
