@@ -39,7 +39,12 @@ export default function SectionTracking() {
           trackEvent('section-reached', { section: SECTIONS[id] ?? id })
         }
       },
-      { threshold: 0.5 },
+      // Fire when a section crosses the vertical CENTER of the viewport. A
+      // height-ratio threshold (e.g. 0.5) can never trigger here: every act is
+      // 1.3×–6.5× the viewport height, so <50% of it is ever on screen at once.
+      // Collapsing the root to a center line with rootMargin makes "reached"
+      // height-independent.
+      { rootMargin: '-50% 0px -50% 0px', threshold: 0 },
     )
 
     const observed = new Set<string>()
