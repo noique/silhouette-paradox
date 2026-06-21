@@ -17,20 +17,18 @@ PM2 守护一个 Node 进程，绑定 `127.0.0.1`，OpenResty 在前面反代。
 ## 架构
 
 ```
-浏览器 ──HTTPS──▶ OpenResty(1Panel, 443) ──反代──▶ 127.0.0.1:3002 (PM2: node server.js)
+浏览器 ──HTTPS──▶ OpenResty(1Panel, 443) ──反代──▶ 127.0.0.1:39000 (PM2: node server.js)
                   ↑ 你在这里配域名+证书              ↑ 本应用，UFW 不开放此端口
 ```
 
-端口规划（避开现有服务）：
+端口规划：本应用用 **`39000`**。
 
-| 端口 | 服务 |
-|------|------|
-| 3001 | MailSort（已占用）|
-| **3002** | **本应用（新）** |
-| 2026 | DeerFlow |
-| 5678 | N8N |
-
-如需改端口，改 `ecosystem.config.cjs` 里的 `PORT` 和 `deploy.sh` 顶部的 `PORT` 即可。
+> ⚠️ 这台服务器实际占用的端口远比旧文档列的多——`3000–3012 / 3030 / 3100 / 3210`、
+> `8080–8096` 等都已被各种服务/容器占用（**3002 也已被另一个 next-server 占了**）。
+> 已实测 `39000` 空闲。30000 以上整段基本都空，所以选了个大号端口避免后续冲突。
+>
+> 改端口：改 `ecosystem.config.cjs` 的 `PORT` 和 `deploy.sh` 顶部的 `PORT`，重跑 `./deploy.sh` 即可。
+> 上线前可先在服务器查一眼是否空闲：`ss -tlnH "sport = :39000"`（无输出=空闲）。
 
 ---
 
@@ -104,20 +102,20 @@ pm2 save
 
 ## 三、配置 OpenResty 反代（你来做）
 
-应用现在跑在 `127.0.0.1:3002`，你把域名反代过去即可。
+应用现在跑在 `127.0.0.1:39000`，你把域名反代过去即可。
 
 ### 方式 A：1Panel 面板（推荐，你现在就是这么管的）
 
 1. 1Panel → **网站** → 创建网站 → **反向代理**
 2. 主域名：填你的域名（和 `.env.deploy` 里写的保持一致）
-3. 代理目标：`http://127.0.0.1:3002`
+3. 代理目标：`http://127.0.0.1:39000`
 4. 保存后在面板里给这个网站**申请 / 部署 HTTPS 证书**（Let's Encrypt 一键）
 
 ### 方式 B：手写 nginx location（如果你直接改配置文件）
 
 ```nginx
 location / {
-    proxy_pass         http://127.0.0.1:3002;
+    proxy_pass         http://127.0.0.1:39000;
     proxy_http_version 1.1;
     proxy_set_header   Host              $host;
     proxy_set_header   X-Real-IP         $remote_addr;
@@ -130,12 +128,12 @@ location / {
 
 # 可选：给 Next.js 不可变静态资源加长缓存，减轻 Node 压力
 location /_next/static/ {
-    proxy_pass http://127.0.0.1:3002;
+    proxy_pass http://127.0.0.1:39000;
     add_header Cache-Control "public, max-age=31536000, immutable";
 }
 ```
 
-> 防火墙：**不要**在 UFW 开放 3002，它只走 loopback，由 OpenResty 内部访问（和 MailSort 的 3001 一致）。
+> 防火墙：**不要**在 UFW 开放 39000，它只走 loopback，由 OpenResty 内部访问（和 MailSort 的 3001 一致）。
 
 ---
 
@@ -178,7 +176,7 @@ pm2 logs silhouette-paradox --lines 100 # 看最近 100 行
 pm2 restart silhouette-paradox          # 重启
 pm2 stop silhouette-paradox             # 停止
 pm2 delete silhouette-paradox           # 删除进程（重新部署用 ./deploy.sh）
-curl -I http://127.0.0.1:3002/          # 本地探活
+curl -I http://127.0.0.1:39000/          # 本地探活
 ```
 
 ---
@@ -189,8 +187,8 @@ curl -I http://127.0.0.1:3002/          # 本地探活
 |------|------|
 | 页面能开但**样式全乱 / 没图** | 静态资源没拷进 standalone。重跑 `./deploy.sh`（已内置 css 资源探针，正常会拦住这种情况）。 |
 | `pm2 status` 里进程一直重启 | `pm2 logs silhouette-paradox` 看报错。最常见是 **Node 版本 < 20.9**，按第一节升级（deploy.sh 现在也会提前硬校验）。 |
-| 启动报端口被占 | 3002 被别的进程占了。改 `ecosystem.config.cjs` 和 `deploy.sh` 的 `PORT`，重跑。 |
-| OpenResty 502 | Node 进程没起来（`pm2 status` 确认）或反代目标端口写错（应为 `127.0.0.1:3002`）。重发布瞬间的短暂 502 属正常。 |
+| 启动报端口被占 | 39000 被别的进程占了。改 `ecosystem.config.cjs` 和 `deploy.sh` 的 `PORT`，重跑。 |
+| OpenResty 502 | Node 进程没起来（`pm2 status` 确认）或反代目标端口写错（应为 `127.0.0.1:39000`）。重发布瞬间的短暂 502 属正常。 |
 | `git reset --hard` 把我服务器上的改动冲掉了 | 这是设计行为：服务器是部署目标，所有改动应在本地改完推 GitHub。机器专属配置放 `.env.deploy`（不入库）。 |
 | 分享到社交平台 OG 图/链接不对 | 检查 `.env.deploy` 的 `NEXT_PUBLIC_SITE_URL` 是否是真实域名，然后重跑 `./deploy.sh`（该变量在**构建时**写死）。 |
 | `npm ci` 报 peer deps 冲突 | 仓库已带 `.npmrc`（`legacy-peer-deps=true`），正常不会触发；若手动装请加 `--legacy-peer-deps`。 |
@@ -202,10 +200,10 @@ curl -I http://127.0.0.1:3002/          # 本地探活
 | 项 | 值 |
 |------|------|
 | 应用目录 | `/opt/silhouette-paradox` |
-| 监听 | `127.0.0.1:3002` |
+| 监听 | `127.0.0.1:39000` |
 | 进程名 | `silhouette-paradox` |
 | 进程管理 | PM2（`pm2 reload silhouette-paradox`）|
-| 反代 | OpenResty（1Panel）→ `127.0.0.1:3002` |
+| 反代 | OpenResty（1Panel）→ `127.0.0.1:39000` |
 | 部署/更新 | `cd /opt/silhouette-paradox && ./deploy.sh` |
 | 机器专属配置 | `.env.deploy`（不入库，仅 `NEXT_PUBLIC_SITE_URL`）|
 | 运行时环境变量 | 无（纯前端）|

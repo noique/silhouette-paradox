@@ -13,7 +13,7 @@
 set -euo pipefail
 
 APP_DIR="/opt/silhouette-paradox"
-PORT="3002"
+PORT="39000"
 
 cd "$APP_DIR"
 

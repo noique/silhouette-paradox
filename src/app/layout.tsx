@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   // DEPLOY.md) so OG/Twitter/canonical URLs point at your server. The fallback is a
   // harmless local placeholder — intentionally NOT the old (decommissioned) Vercel URL.
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3002'
+    process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:39000'
   ),
 }
 
