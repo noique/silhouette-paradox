@@ -18,7 +18,12 @@ export const metadata: Metadata = {
     title: 'The Silhouette Paradox',
     description: 'When luxury aesthetics mask financial hemorrhage — a DTC dark data report',
   },
-  metadataBase: new URL('https://silhouette-paradox.vercel.app'),
+  // Set NEXT_PUBLIC_SITE_URL to your own domain at BUILD time (see .env.deploy in
+  // DEPLOY.md) so OG/Twitter/canonical URLs point at your server. The fallback is a
+  // harmless local placeholder — intentionally NOT the old (decommissioned) Vercel URL.
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3002'
+  ),
 }
 
 export default function RootLayout({

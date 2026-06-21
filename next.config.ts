@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Self-host: emit a minimal, self-contained server bundle (.next/standalone)
+  output: 'standalone',
   turbopack: {
     rules: {
       '*.glsl': {

@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og'
 
-export const runtime = 'edge'
+// Default Node.js runtime: self-hosted on a single Node server, so the OG image
+// is prerendered to a static PNG at build time (no per-request edge render needed).
 export const alt = 'The Silhouette Paradox — DTC Dark Data Report'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
