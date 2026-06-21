@@ -5,6 +5,7 @@ import HeroFabric from '@/components/sections/HeroFabric'
 import ExecutiveSummary from '@/components/sections/ExecutiveSummary'
 import Closing from '@/components/sections/Closing'
 import SectionNav from '@/components/ui/SectionNav'
+import SectionTracking from '@/components/analytics/SectionTracking'
 
 const MarketPulse = dynamic(() => import('@/components/sections/MarketPulse'), {
   ssr: false,
@@ -45,6 +46,7 @@ export default function Home() {
   return (
     <main>
       <SectionNav />
+      <SectionTracking />
 
       {/* Act I — The Illusion */}
       <HeroFabric />
